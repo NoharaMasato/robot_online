@@ -168,13 +168,17 @@ $(document).on('keydown',(event)=>{
         'g' : 'green',
         'b' : 'blue',
         'y' : 'yellow',
-        's' : 'silver'
+        's' : 'silver',
+        'x' : 'draw_tip'
     };
     const command = key2command[event.key];
     if(command){
         console.log(command);        
         if(game_state=='standby'&&command=='enter'){
             socket.emit('start_request',userId);
+        }
+        if(game_state=='ready' && command=='draw_tip'){
+            socket.emit('draw_tip');
         }
     }
 });
@@ -190,6 +194,13 @@ socket.on('game_start',(game)=>{
     render_wall(game);
     console.log(game.robots);
     render_robot(game.robots);
+});
+
+socket.on('announce_tip',(tip)=>{
+    let x=W*0.5 - gridW;
+    let y=H*0.5 - gridH;
+    wallTips.clearRect(x,y,gridW*2, gridH*2);
+    wallTips.drawImage(tip_images[tip.id],x,y,gridW*2, gridH*2);
 });
 
 socket.on('ready',(time)=>{

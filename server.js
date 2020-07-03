@@ -49,7 +49,15 @@ io.on('connection', function(socket){
         game.set_host();
         io.sockets.emit("standby",game.players);
     });
-
+    socket.on('draw_tip',()=>{
+        let unused_tips = game.tips.filter(tip => tip.used == false);
+        let tip = unused_tips[Math.floor(Math.random() * unused_tips.length)]; // draw tip ramdomly from unused tips
+        if(unused_tips.length > 0){
+            game.tips[tip.id].used = true;
+            io.sockets.emit("announce_tip",tip);
+            console.log("tip is drawn")
+        }
+    });
 });
 
 function loop(){
